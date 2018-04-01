@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">AcessaMogi</string>
+    <string name="n_o_tem_conta_cadastra_se">Não tem conta? Cadastra-se</string>
+    <string name="logar">Logar</string>
+    <string name="digite_seu_e_mail">Digite seu e-mail</string>
+    <string name="digite_sua_senha">Digite sua senha</string>
+    <string name="cadastrar">Cadastrar</string>
+    <string name="Cadastrar">Cadastrar</string>
+
+</resources>

@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "463539537668",
+    "firebase_url": "https://acessamogi-8613f.firebaseio.com",
+    "project_id": "acessamogi-8613f",
+    "storage_bucket": "acessamogi-8613f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:463539537668:android:1cf461c1b0ac5261",
+        "android_client_info": {
+          "package_name": "projetofragmento.cursoandroid.com.acessamogi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "463539537668-dq7udol17u8lug332s729u4di6u364sc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "projetofragmento.cursoandroid.com.acessamogi",
+            "certificate_hash": "3caf41574107f48e0910906ffeb7994f217b68d4"
+          }
+        },
+        {
+          "client_id": "463539537668-roa8brt4ivledt5ip619eqml9hk16rk9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "projetofragmento.cursoandroid.com.acessamogi",
+            "certificate_hash": "dfad8ae19b3e670f244db70ec39a9c76500ba061"
+          }
+        },
+        {
+          "client_id": "463539537668-og9jnguqnb39d69412sn3k0dkun6inl3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVrRVisF37IMZdcghMoT6QiriHpZZT9g0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "463539537668-og9jnguqnb39d69412sn3k0dkun6inl3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
