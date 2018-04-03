@@ -1,5 +1,6 @@
 package projetofragmento.cursoandroid.com.acessamogi.activity;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -53,7 +54,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro_usuario);
 
-        //Spinner element
+        /*//Spinner element
         spinner = findViewById(R.id.spinDefiniciencia);
 
         // Spinner DropDown elements
@@ -70,9 +71,9 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         dataAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 
         //Anexando dataAdapter ao Spinner
-        spinner.setAdapter(dataAdapter);
+        spinner.setAdapter(dataAdapter);*/
 
-        nome = findViewById(R.id.editTextCadNome);
+     //   nome = findViewById(R.id.editTextCadNome);
         email = findViewById(R.id.editTextCadEmail);
         senha = findViewById(R.id.editTextCadSenha);
         confirmaSenha = findViewById(R.id.editTextCadRepSenha);
@@ -84,11 +85,11 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 usuario = new Usuario();
-                usuario.setNome(nome.getText().toString());
+                //usuario.setNome(nome.getText().toString());
                 usuario.setEmail(email.getText().toString());
                 usuario.setSenha(senha.getText().toString());
                 usuario.setConfirmacaoSenha(confirmaSenha.getText().toString());
-                usuario.setDeficiencia(spinner.getSelectedItem().toString());
+              //  usuario.setDeficiencia(spinner.getSelectedItem().toString());
 
                 //Caso algum dado de entrada esteja incorreta ele interrompe a execução do programa
                 if (!validaDadosEntrada()) {
@@ -98,6 +99,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
                 cadastrarUsuario();
             }
         });
+
 
     }
 
@@ -119,12 +121,15 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
                                     Toast.LENGTH_LONG).show();
                             FirebaseUser usuarioFirebase = task.getResult().getUser();
 
-                            usuario.setId(usuarioFirebase.getUid());
+                            //Envia o email de Verificacao;
+                            usuarioFirebase.sendEmailVerification();
+
+                           /* usuario.setId(usuarioFirebase.getUid());
                             usuarioDao usrDao = new usuarioDao();
                             //Salva o usuario no Database do Firebase
-                            usrDao.salvar(usuario);
+                            usrDao.salvar(usuario);*/
                             autenticacao.signOut();//Ao rodar o comando para deslogar o salvar da linha acima não é autorizado, ao comentar a linha, eu consigo gravar o dado acima sem problemas
-                            finish();
+                            telaMensagemConfirmacaoEmail();
 
                         } else {//Se houver algum problema na autenticação
 
@@ -158,11 +163,11 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
 
 
         ArrayList<IStrategy> regras = new ArrayList<IStrategy>();
-        regras.add(new VerificaNomeUsuarioVazio());
+        //regras.add(new VerificaNomeUsuarioVazio());
         regras.add(new VerificaEmailUsuarioVazio());
         regras.add(new VerificaSenhaFraca());
         regras.add(new VerificaConfirmacaoSenha());
-        regras.add(new VerificaDeficienciaVazia());
+        //regras.add(new VerificaDeficienciaVazia());
 
         Boolean correto = true;
         StringBuilder mensagemErro = new StringBuilder();
@@ -183,6 +188,13 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         }
 
         return correto;
+    }
+
+    private void telaMensagemConfirmacaoEmail(){
+        Intent intent = new Intent(CadastroUsuarioActivity.this,MensagemConfirmacaoEmail.class);
+        intent.putExtra("email",usuario.getEmail());
+        startActivity(intent);
+        finish();
     }
 
 }
