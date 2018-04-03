@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
 import org.w3c.dom.Text;
@@ -31,18 +32,20 @@ public class LoginActivity extends AppCompatActivity {
     private Usuario usuario;
     private FirebaseAuth autenticacao;
     private TextView adicionarUsuario;
+    private TextView redefinirSenha;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        autenticacao = ConfiguracaoFirebase.getAutenticacao();
         verificarUsuarioLogado();
 
         email = findViewById(R.id.editTextEmail);
         senha = findViewById(R.id.editTextSenha);
         botaoLogar = findViewById(R.id.btLogar);
         adicionarUsuario = findViewById(R.id.textViewAddConta);
+        redefinirSenha = findViewById(R.id.txtEsqueciSenha);
 
         botaoLogar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,13 +63,23 @@ public class LoginActivity extends AppCompatActivity {
                 abrirTelaCadastroUsuario();
             }
         });
+
+        redefinirSenha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                abrirTelaRedefinirSenha();
+            }
+        });
     }
 
     private void verificarUsuarioLogado() {
-        autenticacao = ConfiguracaoFirebase.getAutenticacao();
+
 
         if (autenticacao.getCurrentUser() != null) {
-            abrirTelaPrincipal();
+            if (verificaSeEmailEstaVerificado()) {
+                abrirTelaPrincipal();
+            }
+
         }
     }
 
@@ -76,14 +89,18 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    private void abrirTelaCadastroUsuario(){
-        Intent intent = new Intent(LoginActivity.this,CadastroUsuarioActivity.class);
+    private void abrirTelaCadastroUsuario() {
+        Intent intent = new Intent(LoginActivity.this, CadastroUsuarioActivity.class);
         startActivity(intent);
 
     }
 
-    private void validarLogin(){
-        autenticacao = ConfiguracaoFirebase.getAutenticacao();
+    private void abrirTelaRedefinirSenha(){
+        Intent intent = new Intent(LoginActivity.this,TrocarSenha.class);
+        startActivity(intent);
+    }
+
+    private void validarLogin() {
 
         autenticacao.signInWithEmailAndPassword(
                 usuario.getEmail(),
@@ -91,18 +108,21 @@ public class LoginActivity extends AppCompatActivity {
         ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    abrirTelaPrincipal();
-                    Toast.makeText(LoginActivity.this,"Sucesso ao fazer login!",Toast.LENGTH_LONG).show();
-                }else{
+                if (task.isSuccessful()) {
+
+                    if (verificaSeEmailEstaVerificado()) {
+                        abrirTelaPrincipal();
+                        Toast.makeText(LoginActivity.this, "Sucesso ao fazer login!", Toast.LENGTH_LONG).show();
+                    }
+                } else {
                     String erro;
-                    try{
+                    try {
                         throw task.getException();
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         erro = e.getMessage();
                     }
 
-                    Toast.makeText(LoginActivity.this,"Erro ao fazer login!" + erro,Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "Erro ao fazer login!" + erro, Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -111,5 +131,26 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    private Boolean verificaSeEmailEstaVerificado() {
+
+        FirebaseUser user = autenticacao.getCurrentUser();
+
+        if (user.isEmailVerified()) {
+            // user is verified, so you can finish this activity or send user to activity which you want.
+            /*finish();
+            Toast.makeText(LoginActivity.this, "Successfully logged in", Toast.LENGTH_SHORT).show();*/
+
+            return true;
+        } else {
+            // email is not verified, so just prompt the message to the user and restart this activity.
+            // NOTE: don't forget to log out the user.
+            //FirebaseAuth.getInstance().signOut();
+            //restart this activity
+            Toast.makeText(LoginActivity.this, "É necessário confirmar seu email, por favor, verifique sua caixa de entrada e clique no link de confirmação que enviamos para você!", Toast.LENGTH_LONG).show();
+            return false;
+
+        }
     }
 }
