@@ -1,10 +1,12 @@
 package projetofragmento.cursoandroid.com.acessamogi.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -33,19 +35,23 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth autenticacao;
     private TextView adicionarUsuario;
     private TextView redefinirSenha;
+    private TextView reenviarEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         autenticacao = ConfiguracaoFirebase.getAutenticacao();
-        verificarUsuarioLogado();
+
 
         email = findViewById(R.id.editTextEmail);
         senha = findViewById(R.id.editTextSenha);
         botaoLogar = findViewById(R.id.btLogar);
         adicionarUsuario = findViewById(R.id.textViewAddConta);
         redefinirSenha = findViewById(R.id.txtEsqueciSenha);
+        reenviarEmail = (TextView) findViewById(R.id.txtReenviarEmail);
+
+        verificarUsuarioLogado();
 
         botaoLogar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +76,14 @@ public class LoginActivity extends AppCompatActivity {
                 abrirTelaRedefinirSenha();
             }
         });
+
+        reenviarEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reenviarEmail.setVisibility(TextView.INVISIBLE);
+                abrirTelaReenviarEmail();
+            }
+        });
     }
 
     private void verificarUsuarioLogado() {
@@ -77,7 +91,8 @@ public class LoginActivity extends AppCompatActivity {
 
         if (autenticacao.getCurrentUser() != null) {
             if (verificaSeEmailEstaVerificado()) {
-                abrirTelaPrincipal();
+                abrirTelaMapa();
+                //abrirTelaPrincipal();
             }
 
         }
@@ -95,8 +110,18 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void abrirTelaRedefinirSenha(){
-        Intent intent = new Intent(LoginActivity.this,TrocarSenha.class);
+    private void abrirTelaRedefinirSenha() {
+        Intent intent = new Intent(LoginActivity.this, TrocarSenha.class);
+        startActivity(intent);
+    }
+
+    private void abrirTelaReenviarEmail() {
+        Intent intent = new Intent(LoginActivity.this, ReenviarEmailConfirmacao.class);
+        startActivity(intent);
+    }
+
+    private void abrirTelaMapa() {
+        Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
         startActivity(intent);
     }
 
@@ -111,7 +136,8 @@ public class LoginActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
 
                     if (verificaSeEmailEstaVerificado()) {
-                        abrirTelaPrincipal();
+                        //abrirTelaPrincipal();
+                        abrirTelaMapa();
                         Toast.makeText(LoginActivity.this, "Sucesso ao fazer login!", Toast.LENGTH_LONG).show();
                     }
                 } else {
@@ -148,9 +174,22 @@ public class LoginActivity extends AppCompatActivity {
             // NOTE: don't forget to log out the user.
             //FirebaseAuth.getInstance().signOut();
             //restart this activity
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+            reenviarEmail.setVisibility(TextView.VISIBLE);
             Toast.makeText(LoginActivity.this, "É necessário confirmar seu email, por favor, verifique sua caixa de entrada e clique no link de confirmação que enviamos para você!", Toast.LENGTH_LONG).show();
+
             return false;
 
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
     }
 }
